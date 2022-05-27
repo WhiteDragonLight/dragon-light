@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Home</title>
+        <style>
+            body { 
+                padding: 1rem;
+                font-size: 0.7rem;
+                background-color: black;
+                font-family: monospace;
+                color: #FAFAFA;
+            }
+            a {
+                text-decoration: none;
+                color: inherit;
+            }
+            a:hover {
+                font-weight: bold;
+            }
+
+            a:focus { 
+                outline: none;
+            }
+
+            h3 {
+                margin-top: 0;
+            }
+            #container {
+                max-width: 50rem;
+                margin: auto;
+            }
+            .item {
+                padding: 1rem;
+                border-bottom: 0.0625rem double #FAFAFA;
+            }
+            .item h3 span + span {
+                float: right;
+            }
+            .tab {
+                display: none;
+            }
+            .show {
+                display: revert;
+            }
+            .date {
+                margin-top: 0.625rem;
+                font-weight: bold;
+            }
+            #menu {
+                padding-bottom: 5px;
+                border-bottom: 1px solid white;
+            }
+            .menu-item {
+                padding: 0.3125rem;
+                text-transform: uppercase;
+            }
+            .menu-item.selected {
+                font-weight: bolder;
+            }
+            .menu-item::before, .menu-item::after {
+                content: '•';
+                color: #000;
+            }
+            .menu-item.selected::before {
+                content: '•';
+                color:#FFF;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <div id="menu"></div>
+            <div id="tab-container"></div>
+        </div>
+    </body>
+    <script>
+
+        let title = '';
+        for (i = 0; i < Math.floor(10 + Math.random() * 50); i++) title += String.fromCharCode(0x0000 + Math.random() * 0xFFFFF);
+        document.title = title;
+
+        async function loadArticles() {
+            const response = await fetch('news/base.json?q='+ Date.now());
+            const json = await response.json();
+            
+            json.pages.forEach((page) => {
+                createPage(page);
+            });
+        }
+
+        function createPage (page) {
+
+            const container = document.createElement('div');
+            container.className = (page.isMain) ? 'tab show' : 'tab';
+            
+            document.getElementById('tab-container').appendChild(container);
+            createMenu(page, container);
+
+            page.items.forEach((item) => {
+                createItem (item, container);
+            });
+        }
+
+        function createMenu(page, container) {
+            const link = document.createElement('a');
+            link.className = (page.isMain) ? 'menu-item selected' : 'menu-item';
+            link.setAttribute('href', '#');
+            link.innerHTML = page.category;
+            
+            link.onclick = () => {
+                document.querySelector('.menu-item.selected').classList.remove('selected');
+                link.classList.add('selected');
+                document.querySelector('.tab.show').classList.remove('show');
+                container.classList.add('show');
+            }
+
+            document.getElementById('menu').appendChild(link);
+        }
+
+        function createItem (elem, container) {
+            const item = document.createElement('div');
+            item.className = 'item';
+
+            item.innerHTML += (elem.path !== undefined) ? '<h3><span><a href="'+ elem.path +'">' + elem.title + '</a></span></h3>'
+                                                        : '<h3><span>' + elem.title + '</span></h3>';
+
+            item.innerHTML += '<div class="body-short">'+elem.body+"</div>";
+
+            if (elem.date !== undefined) {
+                item.innerHTML += '<div class="date">' + elem.date + '</div>';
+            }
+
+            container.appendChild(item);
+
+        }
+
+        loadArticles();
+
+    </script>
+</html>
