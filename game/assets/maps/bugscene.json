@@ -34,8 +34,8 @@
                  "type":"player",
                  "visible":true,
                  "width":16,
-                 "x":752,
-                 "y":832
+                 "x":944,
+                 "y":896
                 }, 
                 {
                  "height":16,
@@ -1174,7 +1174,7 @@
                  "visible":true,
                  "width":16,
                  "x":928,
-                 "y":1008
+                 "y":1024
                 }],
          "opacity":1,
          "type":"objectgroup",
