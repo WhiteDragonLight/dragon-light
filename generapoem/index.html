@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avant-Garde Poem Generator</title>
+    <style>
+        body {
+            margin: 0 auto;
+            font-family: Arial, sans-serif;
+
+            width: 800px;
+        }
+
+        .poem-container {
+            text-align: center;
+            font-size: 24px;
+        }
+
+        #title {
+            text-align: center;
+        }
+
+        .poem-container:first-letter,
+        #title:first-letter {
+            text-transform: capitalize
+        }
+
+        .flat-button {
+            background-color: #3498db;
+            /* Blue background */
+            color: #fff;
+            /* White text */
+            border: none;
+            /* No border */
+            padding: 10px 20px;
+            /* Adjust padding as needed */
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            /* Smooth transition for hover effect */
+            margin: 0 auto;
+            width: 150px;
+            display: block;
+            margin-top: 50px;
+            
+        }
+
+        .flat-button:hover {
+            background-color: #2980b9;
+            /* Darker blue on hover */
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h1 id="title"></h1>
+        <div id="poem" class="poem-container"></div>
+        <button class="flat-button" onclick="load()">Regenerar</button>
+    </div>
+
+    <script>
+        const connectors = [
+            'por lo tanto', 'por consiguiente', 'y en conjunto a',
+            'en la profundidad de', 'bajo la sombra de', 'en el umbral de', 'al compás de',
+            'con la melodía de', 'en el ocaso de', 'en la brisa de', 'con el fulgor de',
+            'y', 'pero', 'o', 'sin embargo', 'aunque', 'mientras tanto', 'y así',
+            'como', 'así que', 'tal vez', 'por ende', 'en el éxtasis de', 'a través de',
+            'dentro de', 'más allá de', 'en el abismo de', 'sobre', 'debajo de',
+            'entre', 'cerca de', 'lejos de', 'alrededor de', 'junto a', 'a la par de',
+            'a pesar de', 'incluso', 'aun cuando', 'dado que', 'debido a', 'porque sí',
+            'como si', 'en el borde de', 'más', 'menos', 'junto con', 'después de',
+            'antes de', 'durante', 'frente a', 'en medio de', 'al lado de', 'hacia',
+            'contra', 'bajo', 'por encima de', 'alrededor', 'a través', 'de repente',
+            'finalmente', 'repentinamente', 'silenciosamente', 'en el vacío de',
+            'en el susurro de', 'en la penumbra de', 'en la danza de', 'en el sueño de',
+            'con', 'sin', 'a', 'por', 'desde', 'hasta', 'hacia', 'para', 'según',
+            'durante', 'mediante', 'hacia adelante', 'hacia atrás', 'por siempre',
+            'jamás', 'en el eco de', 'en el canto de', 'en el grito de', 'al son de',
+            'en el reflejo de', 'en el viento de', 'en el horizonte de', 'al alba de',
+            'en el crepúsculo de', 'en la quietud de', 'bajo la lluvia de', 'en la neblina de',
+            'cuando no menos', 'sin dudarlo', 'sin dudas', 'como si fuera', 'como si se tratara de',
+            'despotricando contra', 'incluyendo', 'respirando', 'de la mano de'
+        ];
+
+        function getRandomElement(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+
+        async function load() {
+            try {
+                const response = await fetch('concepts.txt');
+                const data = await response.text();
+                const inputText = data.split('\n').filter(Boolean);
+
+                // generate title
+                document.getElementById('title').innerHTML = generatePoem(1, inputText).join('<br>');
+
+                const numberOfLines = Math.floor(Math.random() * 10) + 6;
+                document.getElementById('poem').innerHTML = generatePoem(numberOfLines, inputText).join('<br>');
+            } catch (error) {
+                console.error('Error fetching concepts.txt:', error);
+            }
+        }
+
+        function generatePoem(numberOfLines, words) {
+            const poemLines = [];
+
+            for (let i = 0; i < numberOfLines; i++) {
+                const word1 = getRandomElement(words);
+                const word2 = getRandomElement(words);
+                const connector = getRandomElement(connectors);
+
+                let line = capitalizeFirstLetter(`${word1} ${connector} ${word2}`);
+                line = i == 0 || i % 4 ? line : '<br>' + line;
+                poemLines.push(line);
+
+            }
+            return poemLines;
+        }
+        load();
+    </script>
+</body>
+
+</html>

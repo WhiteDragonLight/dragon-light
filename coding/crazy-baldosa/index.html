@@ -1,0 +1,78 @@
+<html>
+
+<head>
+    <style>
+        @keyframes zoomInOut {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        body {
+            /*animation: zoomInOut 5s infinite;*/
+            transform-origin: center center;
+            background-color: black;
+            position: relative;
+            overflow: hidden;
+        }        
+        img {
+            image-rendering: pixelated;
+            position: absolute;
+            transition: transform 0.5s ease;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="canvas"></div>
+</body>
+<script>
+    const canvas = document.getElementById('canvas');
+    const size = 14 * 4;
+
+    function draw() {
+        for (let y = 0; y < Math.floor(window.outerHeight / size); y++) {
+            for (let x = 0; x < Math.floor(window.outerWidth / size); x++) {
+                var img = document.createElement('img');
+                img.height = size;
+                img.width = size;
+                img.style.top = y * size;
+                img.style.left = x * size;
+                img.src = Math.random() > 0.5 ? '1.png' : '2.png';
+
+                img.rotation = 0;
+                img.flip = 1;
+                if (Math.random() > 0.5) {
+                    img.flip = -1;
+                    img.rotation = 90;
+                }
+
+                img.rotation += (x + y) % 2 ? 0 : 90;
+                img.style.transform = ' rotate(' + img.rotation + 'deg) ';
+                img.style.transform += ' scaleX(' + img.flip + ') ';
+
+                canvas.appendChild(img);
+                img.addEventListener('click', function() {
+                    this.rotation += this.flip * 90;
+                    this.flip *= -1;
+                    this.style.transform = ' rotate(' + this.rotation + 'deg) ';
+                    this.style.transform += ' scaleX(' + this.flip + ') ';
+                });                
+            }
+        }
+    }
+
+    draw();
+    /*setInterval(() => {
+        canvas.innerHTML = '';
+        draw();
+    }, 1000);*/
+
+
+</script>

@@ -1,0 +1,119 @@
+<html>
+
+<head>
+    <style>
+        body {
+            background-color: black;
+        }
+        #canvas {
+            background-color: black;
+            position: relative;
+        }        
+        img {
+            image-rendering: pixelated;
+            position: absolute;
+            transition: transform 0.5s ease;
+        }
+
+        .flat-button {
+            background-color: #3498db;
+            /* Blue background */
+            color: #fff;
+            /* White text */
+            border: none;
+            /* No border */
+            padding: 10px 20px;
+            /* Adjust padding as needed */
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            /* Smooth transition for hover effect */
+            
+        }
+
+        .flat-button:hover {
+            background-color: #2980b9;
+            /* Darker blue on hover */
+        }
+
+        #form {
+        }
+    </style>
+</head>
+
+<body>
+    <div id="form">
+        <input id="descocido" value="0.3"></input>
+        <button class="flat-button" onclick="draw(document.getElementById('descocido').value)"> Regenerar</button>
+    </div>    
+    <div id="canvas"></div>
+ 
+</body>
+<script>
+    const canvas = document.getElementById('canvas');
+    const size = 10 * 4;
+
+    function draw(descocido) {
+        let matrix = [[]];
+        document.getElementById('canvas').innerHTML = '';
+        for (let y = 0; y < Math.floor(window.innerHeight / size) - 1; y++) {
+            for (let x = 0; x < Math.floor(window.innerWidth / size) - 1; x++) {
+
+                let baseValues = [0,1,2,3,4,5,6,7];
+                const left = x > 0 && matrix[x - 1][y] != undefined ? matrix[x - 1][y] : 6;
+                const top = y > 0 && matrix[x][y - 1] != undefined ? matrix[x][y - 1] : 7;
+
+                if (x == Math.floor(window.innerWidth / size) - 2) baseValues = baseValues.filter(x => ![0,1,3,4,7].includes(x));
+                if (y == Math.floor(window.innerHeight / size) - 2) baseValues = baseValues.filter(x => ![0,1,4,5,6].includes(x));
+
+                if ([0,1,4,5,6].includes(top)) { 
+                    baseValues = baseValues.filter(x => ![4,5,7].includes(x)) 
+                } else {
+                    baseValues = baseValues.filter(x => ![0,1,2,3,6].includes(x)) 
+                }
+                if ([0,1,3,4,7].includes(left)) { 
+                    baseValues = baseValues.filter(x => ![3,4,6].includes(x)) 
+                } else {
+                    baseValues = baseValues.filter(x => ![0,1,2,5,7].includes(x)) 
+                }
+                
+                let selection = baseValues[Math.floor(Math.random() * baseValues.length)];
+                selection = baseValues.includes(1) && baseValues.includes(0) && selection == 2 && Math.random() > descocido ? Math.floor(Math.random() * 2) : selection;
+                if (selection == (x + y) % 2) selection = (selection + 1) % 2;
+
+                if (matrix[x]) {
+                    matrix[x][y] = selection;
+                } else {
+                    matrix[x] = [selection];
+                }
+
+                if (selection != undefined) {
+                    var img = document.createElement('img');
+                    img.height = size;
+                    img.width = size;
+                    img.style.top = y * size;
+                    img.style.left = x * size;
+
+                    if (selection < 2) {
+                        img.src = '1.png';
+                    } else if (selection < 6) {
+                        img.src = '2.png';
+                    } else {
+                        img.src = '3.png';
+                    }
+
+                    img.rotation = [1,3,5,7].includes(selection) ? 90 : 0;
+                    img.rotation += selection == 4 || selection == 5 ? 180 : 0;
+                    img.style.transform = ' rotate(' + img.rotation + 'deg) ';
+                    canvas.appendChild(img);   
+                }
+            }
+        }
+    }
+
+    draw(0.3);
+
+</script>
